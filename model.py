@@ -16,14 +16,14 @@ class CNN(nn.Module):
 
         features = []
         architecture = [
-            [1, 32, 3, 2, 0],
+            [1, 8, 3, 2, 0],
+            [8, 32, 3, 2, 0],
+            # [64, 128],
             [32, 64, 3, 2, 0],
             [64, 128],
             [128, 256, 3, 2, 0],
             [256, 512],
-            [512, 256, 3, 2, 0],
-            [256, 128],
-            [128, 128, 3, 2, 0]
+            [512, 128, 3, 2, 0]
         ]
         for arch in architecture:
             features.extend(self.block(*arch))
@@ -44,10 +44,12 @@ class CNN(nn.Module):
 
     def block(self, in_ch, out_ch, k=3, s=1, pad=1, use_bias=False):
         return [
-            nn.Conv2d(in_ch, out_ch, kernel_size=k, stride=s, padding=pad, bias=use_bias),
+            nn.Conv2d(in_ch, in_ch, groups=in_ch, kernel_size=k, stride=s, padding=pad, bias=use_bias),
+            nn.Conv2d(in_ch, out_ch, kernel_size=1, stride=1, padding=0, bias=use_bias),
             nn.LeakyReLU(),
             nn.BatchNorm2d(out_ch)
         ]
+
 
 if __name__ == '__main__':
     model = CNN()
